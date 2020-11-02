@@ -19,38 +19,13 @@ class Population:
         self.individus=[]       #une liste d'individus initialisée à vide
         self.num=n        #un numéro de population
     
-    def generePop(self):
-        for j in range(indParPopulation):
-            P1=Individu(j)
-            P1.genereInd()
-            self.individus.append(P1)
-            
-    def drawPop(self):
-        decX = 0
-        decY = 0
-        for ind in self.individus:
-            ind.drawInd()
-            img.save('essai'+str(ind.getNum())+'.jpg')
-            image(img,decX,decY)
-            i=ind.getNum()
-            if (i+1)%10 == 0 and i != 0 :
-                decY += 40
-                decX = 0
-            else:
-                decX += 40
-            
-            
 ####################################################################################
 class Individu:
-    def __init__(self,n):
+    def __init__(self):
         self.rectangles=[]     #une liste de rectangles
         self.cout=0
-        self.numero=n
-        
-    def getNum(self):
-        return self.numero
   
-    def genereInd(self):
+    def genereRect(self):
         for j in range(nbRect):
             i = random(1,8)
             r=Rectangle(i)
@@ -120,11 +95,24 @@ def setup():
 ####################################################################################    
 def draw():
     global N
-
-    
+    decX = 0
+    decY = 0
     Pop=Population(N)
-    Pop.generePop()
-    Pop.drawPop()
+    
+    for j in range(indParPopulation):
+        
+        P1=Individu()
+        P1.genereRect()
+        P1.drawInd()
+        img.save('essai'+str(j)+'.jpg')
+        image(img,0,0)
+        image(img,decX,decY)
+        Pop.individus.append(P1)
+        if (j+1)%10 == 0 and j != 0 :
+            decY += 40
+            decX = 0
+        else:
+            decX += 40
     N=N+1 
 
 
