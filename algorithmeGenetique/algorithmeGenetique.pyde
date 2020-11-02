@@ -8,6 +8,7 @@ LargeurRect=4
 lettre='A'
 imgWidth=40
 imgHeight=40
+img=None
 
 
 ########################Déclaration des Classes####################################
@@ -22,7 +23,8 @@ class Individu:
         self.rectangles=[]     #une liste de rectangles
         self.cout=0
             
-    def drawInd(ind):
+    def drawInd(self):
+        global img, imgWidth, imgHeight
         img=createGraphics(imgWidth,imgHeight)
         img.beginDraw()
         img.noSmooth()
@@ -44,19 +46,32 @@ class Rectangle:
 def setup():
     
 ############################Initialisation de la fenêtre###########################
-    size(40,40)
-
+    size(400,400)
+    
     
 def draw():
-    global lettre
-    
-    if keyPressed:
-        lettre=key
-    else:
-        background(255);
-        fill(255,0,0);
-        textSize(40);
-        text(lettre,10,40);
+    global lettre,img
 
+    #if keyPressed:
+      #  lettre=key
+      #  i=i+1
+   # else:
+        #test pour afficher lettre sans passer par la fonction
+        #background(255);
+        #fill(255,0,0);
+        #textSize(40);
+        #text(lettre,10,40);
+        
+    
+    #test en passant par la fonction 
+    #on demande à l'utilisateur de rentrer la lettre à tester 
+    P1=Individu()
+    P1.drawInd()
+    image(img,0,0) #marche pas ça ne s'affiche pas 
+    img.save('essai.bmp') #quel format d'image choisir pour éviter la compression ?????
+
+def keyPressed():
+    global lettre
+    lettre=key
 
     
