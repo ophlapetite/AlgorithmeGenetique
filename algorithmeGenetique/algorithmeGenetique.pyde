@@ -44,9 +44,19 @@ class Rectangle:
 def setup():
     
 ############################Initialisation de la fenêtre###########################
-    size(400,500)
+    size(40,40)
+
     
 def draw():
+    global lettre
+    
+    if keyPressed:
+        lettre=key
+    else:
+        background(255);
+        fill(255,0,0);
+        textSize(40);
+        text(lettre,10,40);
 
-    I1=Individu()
-    I1.drawInd()
+
+    
