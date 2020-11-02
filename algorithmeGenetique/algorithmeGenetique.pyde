@@ -89,12 +89,15 @@ class Rectangle:
 ############################Initialisation de la fenêtre###########################        
 def setup():
     
-    size(40,40)
+    size(400,400)
     noLoop()
     
 ####################################################################################    
 def draw():
     global N
+    decX = 0
+    decY = 0
+    
     Pop=Population(N)
     for j in range(indParPopulation):
         
@@ -102,8 +105,13 @@ def draw():
         P1.genereRect()
         P1.drawInd()
         img.save('essai'+str(j)+'.jpg')
-        image(img,0,0)
+        image(img,decX,decY)
         Pop.individus.append(P1)
+        if (j+1)%10 == 0 and j != 0 :
+            decY += 40
+            decX = 0
+        else:
+            decX += 40
     N=N+1 
 
 
