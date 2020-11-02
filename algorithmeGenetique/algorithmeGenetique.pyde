@@ -35,13 +35,34 @@ class Individu:
         img.textAlign(CENTER,BOTTOM)
         img.textSize(40)
         img.text(lettre,40/2,40)
+        print("drawInd")
+        
+        img.fill(0,255,0,127)
+        
+        for rectangle in self.rectangles :
+            x = random(0,40)
+            y = random(0,40)
+            print("un Rectangle")
+            img.ellipse(x,y, 10,10)#il y a des ronds dessus mais pas de rect
+            img.pushMatrix()
+            img.translate(x,y)
+            img.rotate(rectangle.getOrientation())
+            img.rect(0,0,LargeurRect,rectangle.getLongueur())
+            img.popMatrix()
+        img.endDraw()
             
     
 class Rectangle:
-    def __init__(self,la):
-        self.orientation=PI/4    #on lui donne une valeur d'orientation par défaut
+    def __init__(self,angle):
+        self.orientation=angle*PI/4    #on lui donne une valeur d'orientation par défaut
         self.largeur=LargeurRect
         self.longueur=0
+        
+    def getLongueur(self):
+        return self.longueur
+    
+    def getOrientation(self):
+        return self.orientation
     
 
 def setup():
@@ -67,6 +88,11 @@ def draw():
     #test en passant par la fonction 
     #on demande à l'utilisateur de rentrer la lettre à tester 
     P1=Individu()
+    
+    for j in range(nbRect):
+        i = random(0,8)
+        P1.rectangles.append(Rectangle(i))
+        
     P1.drawInd()
     img.save('essai.jpg') #quel format d'image choisir pour éviter la compression ?????
     image(img,0,0) #marche pas ça ne s'affiche pas 
