@@ -74,5 +74,7 @@ def draw():
 def keyPressed():
     global lettre
     lettre=key
+    
+#COUCOU JE SUIS UN COMMENTAIRE 
 
     
