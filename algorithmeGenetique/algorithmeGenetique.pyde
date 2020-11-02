@@ -43,7 +43,7 @@ class Individu:
             x = random(0,40)
             y = random(0,40)
             print("un Rectangle")
-            img.ellipse(x,y, 10,10)#il y a des ronds dessus mais pas de rect
+            img.rect(rectangle.coord[0],rectangle.coord[1],rectangle.longueur,rectangle.largeur)#il y a des ronds dessus mais pas de rect
             img.pushMatrix()
             img.translate(x,y)
             img.rotate(rectangle.getOrientation())
@@ -53,10 +53,11 @@ class Individu:
             
     
 class Rectangle:
-    def __init__(self,angle):
-        self.orientation=angle*PI/4    #on lui donne une valeur d'orientation par défaut
+    def __init__(self,i):
+        self.orientation=i*PI/4    # 8 orientations possibles, valeur i comprise entre 1 et 8
         self.largeur=LargeurRect
         self.longueur=0
+        self.coord=(0,0)
         
     def getLongueur(self):
         return self.longueur
@@ -69,29 +70,19 @@ def setup():
     
 ############################Initialisation de la fenêtre###########################
     size(40,40)
+    noLoop()
     
     
 def draw():
-    global lettre,img
 
-    #if keyPressed:
-      #  lettre=key
-      #  i=i+1
-   # else:
-        #test pour afficher lettre sans passer par la fonction
-        #background(255);
-        #fill(255,0,0);
-        #textSize(40);
-        #text(lettre,10,40);
-        
-    
-    #test en passant par la fonction 
-    #on demande à l'utilisateur de rentrer la lettre à tester 
     P1=Individu()
     
     for j in range(nbRect):
-        i = random(0,8)
-        P1.rectangles.append(Rectangle(i))
+        i = random(1,8)
+        r=Rectangle(i)
+        r.longueur=random(5,20)
+        r.coord=(random(0,40),random(0,40))
+        P1.rectangles.append(r)
         
     P1.drawInd()
     img.save('essai.jpg') #quel format d'image choisir pour éviter la compression ?????
@@ -100,7 +91,4 @@ def draw():
 def keyPressed():
     global lettre
     lettre=key
-    
-#COUCOU JE SUIS UN COMMENTAIRE 
-
     
