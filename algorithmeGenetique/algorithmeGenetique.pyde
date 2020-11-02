@@ -43,11 +43,10 @@ class Individu:
             x = random(0,40)
             y = random(0,40)
             print("un Rectangle")
-            img.rect(rectangle.coord[0],rectangle.coord[1],rectangle.longueur,rectangle.largeur)#il y a des ronds dessus mais pas de rect
             img.pushMatrix()
             img.translate(x,y)
             img.rotate(rectangle.getOrientation())
-            img.rect(0,0,LargeurRect,rectangle.getLongueur())
+            img.rect(rectangle.getCoord()[0],rectangle.getCoord()[1],rectangle.getLongueur(),LargeurRect)
             img.popMatrix()
         img.endDraw()
             
@@ -65,6 +64,9 @@ class Rectangle:
     def getOrientation(self):
         return self.orientation
     
+    def getCoord(self):
+        return self.coord
+    
 
 def setup():
     
@@ -76,13 +78,15 @@ def setup():
 def draw():
 
     P1=Individu()
+    print(P1.rectangles)
     
-    for j in range(nbRect):
+    for j in range(2):
         i = random(1,8)
         r=Rectangle(i)
         r.longueur=random(5,20)
         r.coord=(random(0,40),random(0,40))
         P1.rectangles.append(r)
+    print(P1.rectangles)
         
     P1.drawInd()
     img.save('essai.jpg') #quel format d'image choisir pour éviter la compression ?????
