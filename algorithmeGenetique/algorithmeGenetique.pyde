@@ -1,8 +1,9 @@
 ##################################### PROJET 2020- 2021 ############################
 
 ########################Déclaration des paramètres#################################
-global nbRect,LargeurRect,lettre,img,imgWidth,imgHeight
-    
+global nbRect,LargeurRect,lettre,img,imgWidth,imgHeight, N
+
+N=1 #numéro de génération 
 nbRect=5
 LargeurRect=4 
 lettre='A'
@@ -13,9 +14,9 @@ img=None
 
 ########################Déclaration des Classes####################################
 class Population:
-    def __init__(self,numero):
+    def __init__(self):
         self.individus=[]       #une liste d'individus initialisée à vide
-        self.num=numero         #un numéro de population
+        self.num=N        #un numéro de population
     
 
 class Individu:
@@ -46,7 +47,7 @@ class Rectangle:
 def setup():
     
 ############################Initialisation de la fenêtre###########################
-    size(400,400)
+    size(40,40)
     
     
 def draw():
@@ -67,9 +68,9 @@ def draw():
     #on demande à l'utilisateur de rentrer la lettre à tester 
     P1=Individu()
     P1.drawInd()
+    img.save('essai.jpg') #quel format d'image choisir pour éviter la compression ?????
     image(img,0,0) #marche pas ça ne s'affiche pas 
-    img.save('essai.bmp') #quel format d'image choisir pour éviter la compression ?????
-
+    
 def keyPressed():
     global lettre
     lettre=key
