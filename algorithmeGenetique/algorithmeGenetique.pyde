@@ -107,7 +107,7 @@ def draw():
     N=N+1 
 
 
-    
+
 def keyPressed():
     global lettre
     lettre=key
