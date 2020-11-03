@@ -80,6 +80,24 @@ class Individu:
             img.rect(0,0,rectangle.getLongueur(),largeurRect)
             img.popMatrix()
         img.endDraw()
+        
+        #calcul du coût
+        pB=0 #nb pixels blancs
+        pR=0 # rouges
+        pV=0 #verts
+        pTot= imgWidth*imgHeight
+        for i in range(0,len(img.pixels)):
+            col=(red(img.pixels[i]), green (img.pixels[i]),blue(img.pixels[i]))
+            if col==(255,255,255):
+                pB=pB+1
+            else:
+                if col==(255,0,0):
+                    pR=pR+1
+                else:
+                    if col==(128,255,128):
+                        pV=pV+1
+        self.cout=pTot-(pB+pR+pV)
+        print(self.cout)
             
 ########################################################################################   
 class Rectangle:
