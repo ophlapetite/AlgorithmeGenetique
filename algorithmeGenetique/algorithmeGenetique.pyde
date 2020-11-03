@@ -26,8 +26,8 @@ class Population:
             self.individus.append(P1)
             
     def drawPop(self):
-        decX = 0
-        decY = 0
+        decX = 0  #décalage de l"image en X
+        decY = 0 # décalage de l'image en Y 
         for ind in self.individus:
             ind.drawInd()
             img.save('essai'+str(ind.getNum())+'.jpg')
@@ -82,10 +82,11 @@ class Individu:
         img.endDraw()
         
         #calcul du coût
-        pB=0 #nb pixels blancs
-        pR=0 # rouges
-        pV=0 #verts
-        pTot= imgWidth*imgHeight
+        #on les déclare en réels plutot qu'en entiers<
+        pB=0.0 #nb pixels blancs
+        pR=0.0 # rouges
+        pV=0.0 #verts
+        pA=0.0 # autre couleur/mélange
         for i in range(0,len(img.pixels)):
             col=(red(img.pixels[i]), green (img.pixels[i]),blue(img.pixels[i]))
             if col==(255,255,255):
@@ -96,7 +97,10 @@ class Individu:
                 else:
                     if col==(128,255,128):
                         pV=pV+1
-        self.cout=pTot-(pB+pR+pV)
+                    else:
+                        pA=pA+1
+        
+        self.cout=int(pA/(pR+pA)*100) #on ne garde que la valeur entière 
         print(self.cout)
             
 ########################################################################################   
