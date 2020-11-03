@@ -82,11 +82,10 @@ class Individu:
         img.endDraw()
         
         #calcul du coût
-        #on les déclare en réels plutot qu'en entiers<
-        pB=0.0 #nb pixels blancs
-        pR=0.0 # rouges
-        pV=0.0 #verts
-        pA=0.0 # autre couleur/mélange
+        pB=0 #nb pixels blancs
+        pR=0 # rouges
+        pV=0 #verts
+        pA=0 # autre couleur/mélange
         for i in range(0,len(img.pixels)):
             col=(red(img.pixels[i]), green (img.pixels[i]),blue(img.pixels[i]))
             if col==(255,255,255):
@@ -100,7 +99,7 @@ class Individu:
                     else:
                         pA=pA+1
         
-        self.cout=int(pA/(pR+pA)*100) #on ne garde que la valeur entière 
+        self.cout=pV+pR
         print(self.cout)
             
 ########################################################################################   
