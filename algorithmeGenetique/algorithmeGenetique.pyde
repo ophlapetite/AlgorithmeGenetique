@@ -39,6 +39,34 @@ class Population:
             else:
                 decX += 40
             
+def fusion(gauche,droite):
+    resultat = []
+    indexGauche, indexDroite = 0,0
+    while indexGauche < len(gauche) and indexDroite < len(droite):
+        if gauche[indexGauche].cout >= droite[indexDroite].cout:
+            resultat.append(gauche[indexGauche])
+            indexGauche += 1
+        else:
+            resultat.append(droite[indexDroite])
+            indexDroite += 1
+    
+    if gauche:
+        resultat.extend(gauche[indexGauche:])
+    if droite:
+        resultat.extend(droite[indexDroite:])
+        
+    return resultat
+    
+def triFusion(m):
+    if len(m) <= 1:
+        return m
+    milieu = len(m)//2
+    gauche = m[:milieu]
+    droite = m[milieu:]
+    gauche = triFusion(gauche)
+    droite = triFusion(droite)
+    return list(fusion(gauche, droite))
+            
             
 ####################################################################################
 class Individu:
@@ -61,15 +89,14 @@ class Individu:
     def drawInd(self):
         global img
         img=createGraphics(imgWidth,imgHeight)
-        img.beginDraw()
         img.noSmooth()
+        img.beginDraw()
         img.background(255)
         img.fill(255,0,0)
         img.noStroke()
         img.textAlign(CENTER,BOTTOM)
         img.textSize(imgHeight)
         img.text(lettre,imgWidth/2,imgHeight)
-    
         
         img.fill(0,255,0,127)
         
@@ -82,10 +109,10 @@ class Individu:
         img.endDraw()
         
         #calcul du coût
-        pB=0 #nb pixels blancs
-        pR=0 # rouges
-        pV=0 #verts
-        pA=0 # autre couleur/mélange
+        pB=0.0 #nb pixels blancs
+        pR=0.0 # rouges
+        pV=0.0 #verts
+        pA=0.0 # autre couleur/mélange
         for i in range(0,len(img.pixels)):
             col=(red(img.pixels[i]), green (img.pixels[i]),blue(img.pixels[i]))
             if col==(255,255,255):
@@ -99,9 +126,8 @@ class Individu:
                     else:
                         pA=pA+1
         
-        self.cout=pV+pR
-        print(self.cout)
-            
+        self.cout=(pA/(pR+pA))*100
+                    
 ########################################################################################   
 class Rectangle:
     def __init__(self,i):
@@ -141,11 +167,11 @@ def setup():
 ####################################################################################    
 def draw():
     global N
-
     
     Pop=Population(N)
     Pop.generePop()
     Pop.drawPop()
+    Pop.individus = triFusion(Pop.individus)
     N=N+1 
 
 
