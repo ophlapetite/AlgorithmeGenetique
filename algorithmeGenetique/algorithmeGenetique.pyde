@@ -62,13 +62,28 @@ class Individu:
         Fonction qu génère un individu aléatoire
         '''
         # remplissage du tableau de rectangles avec rectangles aléatoires
+        self.genereRect()
+        #création de l'image de l'individu
+        self.genereImg()
+        #calcul du coût
+        self.calculCout()
+        
+    def genereRect(self):
+        """
+        Fonction qui génère des rectangles aléatoires et les stockes dans rectangles
+        """
         for j in range(nbRect):
             i = random(1,8)
             r=Rectangle(i)
             r.setLongueur(random(5,20))
             r.setX(random(0,40)) ; r.setY(random(0,40))
             self.rectangles.append(r)
-        #création de l'image de l'individu
+            
+            
+    def genereImg(self):
+        """
+        Fonction qui génère l'image de l'individu, affiche la lettre en rouge et les rectangles en vert 
+        """
         self.img.noSmooth()
         self.img.beginDraw()
         self.img.background(255)
@@ -87,7 +102,11 @@ class Individu:
             self.img.rect(0,0,rectangle.getLongueur(),largeurRect)
             self.img.popMatrix()
         self.img.endDraw()
-        #calcul du coût
+        
+    def calculCout(self):
+        """
+        Fonction qui calcule le cout de l'individu en fonction de la répartition des couleurs des pixels de son image
+        """
         pB=0.0 #nb pixels blancs
         pR=0.0 # rouges
         pV=0.0 #verts
@@ -107,7 +126,7 @@ class Individu:
         
         self.cout=int((pA/(pR+pA))*100)
         
-    def DrawInd(self):
+    def drawInd(self):
         """
         Fonction qui affiche à l'écran l'image d'un individu
         """
@@ -195,14 +214,15 @@ def draw():
     Pop=Population(N)
     Pop.generePop()
     Pop.drawPop()
-    #Pop.individus = triFusion(Pop.individus)
+    Pop.individus = triFusion(Pop.individus)
     for ind in Pop.individus:
         print(ind.cout)
     N=N+1 
 
 
 
-def keyPressed():
-    global lettre
-    lettre=key
+#####à revoir######
+    #def keyPressed():
+    #global lettre
+    #lettre=key
     
