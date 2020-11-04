@@ -11,6 +11,8 @@ imgWidth=40
 imgHeight=40
 img=None
 indParPopulation=100
+nbSelection=30               #30% de la population est constituée des meilleurs individus de la population précédente
+nbReproCroisee=35       
 
 
 ########################Déclaration des Classes####################################
@@ -44,14 +46,14 @@ class Population:
             else:
                 decX += 40
                 
-    def selection(self,nb):
+    def selection(self):
         '''
-        Fonction qui va selectionner les nb meilleurs individus 
+        Fonction qui va selectionner les nbSelection meilleurs individus de Pop
         '''
         popTrie = triFusion(self.individus)
         meilleurPatrimoine = []
         
-        for i in range(nb):
+        for i in range(nbSelection):
             meilleurPatrimoine.append(popTrie[i])
             
         return meilleurPatrimoine
@@ -64,7 +66,7 @@ class Population:
         for ind in self.individus:
             print(ind.cout)
             
-    def reproductionCroisee(self,nb):
+    def reproductionCroisee(self):
         '''
         Fonction qui va engendrer la génération suivante parmis les meilleurs individus
         :nb int: nombre d'individus faisant partie de la selection 
@@ -72,7 +74,8 @@ class Population:
         enfants = []
         rectanglesEnfant = []
         
-        groupeParent = self.selection(nb)
+        groupeParent = self.individus
+        nb= nbReproCroisee
         
         for repro in range(nb//2):
             indice1 = randint(0,nb-1-(repro*2))
@@ -275,11 +278,12 @@ def draw():
     
     Pop=Population(N)
     Pop.generePop()
-    #Pop.drawPop()
+    Pop.drawPop()
     
-    Pop2=Population(N)
-    Pop.individus = Pop.reproductionCroisee(30)
-    Pop2.drawPop()
+    Pop2=Population(N+1)
+    Pop2.individus += Pop.selection()
+    #Pop2.individus+=Pop2.reproductionCroisee(Pop)
+    #Pop2.drawPop()
     
     N=N+1 
 
