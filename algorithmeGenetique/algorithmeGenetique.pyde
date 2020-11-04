@@ -241,15 +241,31 @@ class Rectangle:
         self.y=val
 ############################Autres fonctions utiles################################
 
-def fusion(gauche,droite):
-   return [droite if gauche==[] else gauche if droite==[] else [gauche[0]]+fusion(gauche[1:],droite) if (gauche[0].getCout()) <= (droite[0].getCout()) else [droite[0]]+fusion(gauche,droite[1:])]
-
-    
-def triFusion(m):
-    if len(m) <= 1:
-        return m
-    print(m[0].getCout())
-    return fusion(triFusion(m[:(len(m)//2)]),triFusion(m[(len(m)//2):]))  
+def triRapide(L):
+    """trirapide(L): tri rapide (quicksort) de la liste L"""
+    def trirap(L, g, d):
+        pivot = L[(g+d)//2].cout
+        i = g
+        j = d
+        while True:
+            while L[i].cout>pivot:
+                i+=1
+            while L[j].cout<pivot:
+                j-=1
+            if i>j:
+                break
+            if i<j:
+                L[i], L[j] = L[j], L[i]
+            i+=1
+            j-=1
+        if g<j:
+            trirap(L,g,j)
+        if i<d:
+            trirap(L,i,d)
+ 
+    g=0
+    d=len(L)-1
+    trirap(L,g,d)
         
 ############################Initialisation de la fenêtre###########################        
 def setup():
@@ -264,10 +280,14 @@ def draw():
     Pop=Population(N)
     Pop.generePop()
     Pop.drawPop()
-    triFusion(Pop.individus)
+    for ind in Pop.individus:
+        print(ind.cout)
+    triRapide(Pop.individus)
+    for ind in Pop.individus:
+        print(ind.cout)
     
-    Pop2=Population(N+1)
-    Pop2.individus += Pop.selection()
+   # Pop2=Population(N+1)
+    #Pop2.individus += Pop.selection()
     #Pop2.individus+=Pop2.reproductionCroisee(Pop)
     #Pop2.drawPop()
     
