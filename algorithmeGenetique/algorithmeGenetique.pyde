@@ -18,54 +18,32 @@ class Population:
     def __init__(self,n):
         self.individus=[]       #une liste d'individus initialisée à vide
         self.num=n        #un numéro de population
+        
     
     def generePop(self):
+        '''
+        Fonction qui génère des individus aléatoires et les ajoute pour constituer une population qui servira de base
+        '''
         for j in range(indParPopulation):
             P1=Individu(j)
             P1.genereInd()
             self.individus.append(P1)
             
     def drawPop(self):
+        '''
+        Fonction qui affiche une population en affichant ses individus un par un avec un décalage
+        '''
         decX = 0  #décalage de l"image en X
         decY = 0 # décalage de l'image en Y 
         for ind in self.individus:
-            ind.drawInd()
-            img.save('essai'+str(ind.getNum())+'.jpg')
-            image(img,decX,decY)
+            ind.saveImg()                          #on peut mettre cette ligne en commentaire si on ne veut pas suvegarder chaque image à chaque fois
+            image(ind.img,decX,decY)
             i=ind.getNum()
             if (i+1)%10 == 0 and i != 0 :
                 decY += 40
                 decX = 0
             else:
                 decX += 40
-            
-def fusion(gauche,droite):
-    resultat = []
-    indexGauche, indexDroite = 0,0
-    while indexGauche < len(gauche) and indexDroite < len(droite):
-        if gauche[indexGauche].cout >= droite[indexDroite].cout:
-            resultat.append(gauche[indexGauche])
-            indexGauche += 1
-        else:
-            resultat.append(droite[indexDroite])
-            indexDroite += 1
-    
-    if gauche:
-        resultat.extend(gauche[indexGauche:])
-    if droite:
-        resultat.extend(droite[indexDroite:])
-        
-    return resultat
-    
-def triFusion(m):
-    if len(m) <= 1:
-        return m
-    milieu = len(m)//2
-    gauche = m[:milieu]
-    droite = m[milieu:]
-    gauche = triFusion(gauche)
-    droite = triFusion(droite)
-    return list(fusion(gauche, droite))
             
             
 ####################################################################################
@@ -74,47 +52,48 @@ class Individu:
         self.rectangles=[]     #une liste de rectangles
         self.cout=0
         self.numero=n
+        self.img=createGraphics(imgWidth,imgHeight)
         
     def getNum(self):
         return self.numero
   
     def genereInd(self):
+        '''
+        Fonction qu génère un individu aléatoire
+        '''
+        # remplissage du tableau de rectangles avec rectangles aléatoires
         for j in range(nbRect):
             i = random(1,8)
             r=Rectangle(i)
             r.setLongueur(random(5,20))
             r.setX(random(0,40)) ; r.setY(random(0,40))
             self.rectangles.append(r)
-          
-    def drawInd(self):
-        global img
-        img=createGraphics(imgWidth,imgHeight)
-        img.noSmooth()
-        img.beginDraw()
-        img.background(255)
-        img.fill(255,0,0)
-        img.noStroke()
-        img.textAlign(CENTER,BOTTOM)
-        img.textSize(imgHeight)
-        img.text(lettre,imgWidth/2,imgHeight)
+        #création de l'image de l'individu
+        self.img.noSmooth()
+        self.img.beginDraw()
+        self.img.background(255)
+        self.img.fill(255,0,0)
+        self.img.noStroke()
+        self.img.textAlign(CENTER,BOTTOM)
+        self.img.textSize(imgHeight)
+        self.img.text(lettre,imgWidth/2,imgHeight)
         
-        img.fill(0,255,0,127)
+        self.img.fill(0,255,0,127)
         
         for rectangle in self.rectangles :
-            img.pushMatrix()
-            img.translate(rectangle.getX(),rectangle.getY())
-            img.rotate(rectangle.getOrientation())
-            img.rect(0,0,rectangle.getLongueur(),largeurRect)
-            img.popMatrix()
-        img.endDraw()
-        
+            self.img.pushMatrix()
+            self.img.translate(rectangle.getX(),rectangle.getY())
+            self.img.rotate(rectangle.getOrientation())
+            self.img.rect(0,0,rectangle.getLongueur(),largeurRect)
+            self.img.popMatrix()
+        self.img.endDraw()
         #calcul du coût
         pB=0.0 #nb pixels blancs
         pR=0.0 # rouges
         pV=0.0 #verts
         pA=0.0 # autre couleur/mélange
-        for i in range(0,len(img.pixels)):
-            col=(red(img.pixels[i]), green (img.pixels[i]),blue(img.pixels[i]))
+        for i in range(0,len(self.img.pixels)):
+            col=(red(self.img.pixels[i]), green (self.img.pixels[i]),blue(self.img.pixels[i]))
             if col==(255,255,255):
                 pB=pB+1
             else:
@@ -126,7 +105,23 @@ class Individu:
                     else:
                         pA=pA+1
         
-        self.cout=(pA/(pR+pA))*100
+        self.cout=int((pA/(pR+pA))*100)
+        
+    def DrawInd(self):
+        """
+        Fonction qui affiche à l'écran l'image d'un individu
+        """
+        image(self.img,0,0)
+        
+    def saveImg(self):
+        """
+        Fonction qui sauvegarde au format jpg l'image de l'individu
+        """
+        self.img.save('essai'+str(self.getNum())+'.jpg')
+
+        
+        
+
                     
 ########################################################################################   
 class Rectangle:
@@ -157,6 +152,35 @@ class Rectangle:
         
     def setY(self,val):
         self.y=val
+############################Autres fonctions utiles################################
+
+def fusion(gauche,droite):
+    resultat = []
+    indexGauche, indexDroite = 0,0
+    while indexGauche < len(gauche) and indexDroite < len(droite):
+        if gauche[indexGauche].cout >= droite[indexDroite].cout:
+            resultat.append(gauche[indexGauche])
+            indexGauche += 1
+        else:
+            resultat.append(droite[indexDroite])
+            indexDroite += 1
+    
+    if gauche:
+        resultat.extend(gauche[indexGauche:])
+    if droite:
+        resultat.extend(droite[indexDroite:])
+        
+    return resultat
+    
+def triFusion(m):
+    if len(m) <= 1:
+        return m
+    milieu = len(m)//2
+    gauche = m[:milieu]
+    droite = m[milieu:]
+    gauche = triFusion(gauche)
+    droite = triFusion(droite)
+    return list(fusion(gauche, droite))
         
 ############################Initialisation de la fenêtre###########################        
 def setup():
@@ -171,7 +195,9 @@ def draw():
     Pop=Population(N)
     Pop.generePop()
     Pop.drawPop()
-    Pop.individus = triFusion(Pop.individus)
+    #Pop.individus = triFusion(Pop.individus)
+    for ind in Pop.individus:
+        print(ind.cout)
     N=N+1 
 
 
