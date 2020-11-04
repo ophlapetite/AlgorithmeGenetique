@@ -35,10 +35,9 @@ class Population:
         '''
         decX = 0  #décalage de l"image en X
         decY = 0 # décalage de l'image en Y 
-        for ind in self.individus:
-            ind.saveImg()                          #on peut mettre cette ligne en commentaire si on ne veut pas suvegarder chaque image à chaque fois
-            image(ind.img,decX,decY)
-            i=ind.getNum()
+        for i in range(len(self.individus)):
+            self.individus[i].saveImg()                          #on peut mettre cette ligne en commentaire si on ne veut pas suvegarder chaque image à chaque fois
+            image(self.individus[i].img,decX,decY)
             if (i+1)%10 == 0 and i != 0 :
                 decY += 40
                 decX = 0
@@ -213,8 +212,8 @@ def draw():
     
     Pop=Population(N)
     Pop.generePop()
-    Pop.drawPop()
     Pop.individus = triFusion(Pop.individus)
+    Pop.drawPop()
     for ind in Pop.individus:
         print(ind.cout)
     N=N+1 
