@@ -1,5 +1,5 @@
 ##################################### PROJET 2020- 2021 ############################
-
+from random import randint
 ########################Déclaration des paramètres#################################
 global nbRect,LargeurRect,lettre,img,imgWidth,imgHeight, N
 
@@ -43,7 +43,64 @@ class Population:
                 decX = 0
             else:
                 decX += 40
+                
+    def selection(self,nb):
+        '''
+        Fonction qui va selectionner les nb meilleurs individus 
+        '''
+        popTrie = triFusion(self.individus)
+        meilleurPatrimoine = []
+        
+        for i in range(nb):
+            meilleurPatrimoine.append(popTrie[i])
             
+        return meilleurPatrimoine
+        
+        
+    def afficheCout(self):
+        '''
+        Fonction qui va afficher les couts de chaque individus d'une population
+        '''
+        for ind in self.individus:
+            print(ind.cout)
+            
+    def reproductionCroisee(self,nb):
+        '''
+        Fonction qui va engendrer la génération suivante parmis les meilleurs individus
+        :nb int: nombre d'individus faisant partie de la selection 
+        '''
+        enfants = []
+        rectanglesEnfant = []
+        
+        groupeParent = self.selection(nb)
+        
+        for repro in range(nb//2):
+            indice1 = randint(0,nb-1-(repro*2))
+            parent1 = groupeParent[indice1]
+            groupeParent.pop(indice1)
+        
+            indice2 = randint(0,nb-2-(repro*2))
+            parent2 = groupeParent[indice2]
+            groupeParent.pop(indice2)
+        
+            rectParent1 = parent1.rectangles
+            rectParent2 = parent2.rectangles
+        
+            for i in range(3):
+                rand = randint(0,len(rectParent1)-1)
+                rectanglesEnfant.append(rectParent1[rand])
+                rectParent1.pop(rand)
+            
+            for i in range(2):
+                rand = randint(0,len(rectParent1)-1)
+                rectanglesEnfant.append(rectParent2[rand])
+                rectParent2.pop(rand)
+            
+            enfants.append(Individu(len(self.individus)+1))
+            enfants[len(enfants)-1].rectangles = rectanglesEnfant
+        
+        return enfants
+        
             
 ####################################################################################
 class Individu:
@@ -52,6 +109,12 @@ class Individu:
         self.cout=0
         self.numero=n
         self.img=createGraphics(imgWidth,imgHeight)
+        
+    """def __init__(self,n, rects = []):
+        self.rectangles=rects     #une liste de rectangles
+        self.cout=0
+        self.numero=n
+        self.img=createGraphics(imgWidth,imgHeight)"""
         
     def getNum(self):
         return self.numero
@@ -212,10 +275,12 @@ def draw():
     
     Pop=Population(N)
     Pop.generePop()
-    Pop.individus = triFusion(Pop.individus)
-    Pop.drawPop()
-    for ind in Pop.individus:
-        print(ind.cout)
+    #Pop.drawPop()
+    
+    Pop2=Population(N)
+    Pop.individus = Pop.reproductionCroisee(30)
+    Pop2.drawPop()
+    
     N=N+1 
 
 
