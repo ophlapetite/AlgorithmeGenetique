@@ -121,7 +121,10 @@ class Individu:
         
     def getNum(self):
         return self.numero
-  
+    
+    def getCout(self):
+        return self.cout
+    
     def genereInd(self):
         '''
         Fonction qu génère un individu aléatoire
@@ -239,32 +242,14 @@ class Rectangle:
 ############################Autres fonctions utiles################################
 
 def fusion(gauche,droite):
-    resultat = []
-    indexGauche, indexDroite = 0,0
-    while indexGauche < len(gauche) and indexDroite < len(droite):
-        if gauche[indexGauche].cout >= droite[indexDroite].cout:
-            resultat.append(gauche[indexGauche])
-            indexGauche += 1
-        else:
-            resultat.append(droite[indexDroite])
-            indexDroite += 1
-    
-    if gauche:
-        resultat.extend(gauche[indexGauche:])
-    if droite:
-        resultat.extend(droite[indexDroite:])
-        
-    return resultat
+   return [droite if gauche==[] else gauche if droite==[] else [gauche[0]]+fusion(gauche[1:],droite) if (gauche[0].getCout()) <= (droite[0].getCout()) else [droite[0]]+fusion(gauche,droite[1:])]
+
     
 def triFusion(m):
     if len(m) <= 1:
         return m
-    milieu = len(m)//2
-    gauche = m[:milieu]
-    droite = m[milieu:]
-    gauche = triFusion(gauche)
-    droite = triFusion(droite)
-    return list(fusion(gauche, droite))
+    print(m[0].getCout())
+    return fusion(triFusion(m[:(len(m)//2)]),triFusion(m[(len(m)//2):]))  
         
 ############################Initialisation de la fenêtre###########################        
 def setup():
@@ -279,6 +264,7 @@ def draw():
     Pop=Population(N)
     Pop.generePop()
     Pop.drawPop()
+    triFusion(Pop.individus)
     
     Pop2=Population(N+1)
     Pop2.individus += Pop.selection()
