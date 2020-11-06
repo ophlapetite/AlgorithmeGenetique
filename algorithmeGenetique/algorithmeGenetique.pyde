@@ -68,8 +68,7 @@ class Population:
             
     def reproductionCroisee(self):
         '''
-        Fonction qui va engendrer la génération suivante parmis les meilleurs individus
-        :nb int: nombre d'individus faisant partie de la selection 
+        Fonction qui va engendrer la génération suivante en faisant des croisement de 2 parents au hasard
         '''
         enfants = []
         rectanglesEnfant = []
@@ -88,19 +87,18 @@ class Population:
         
             rectParent1 = parent1.rectangles
             rectParent2 = parent2.rectangles
-        
-            for i in range(3):
-                rand = randint(0,len(rectParent1)-1)
-                rectanglesEnfant.append(rectParent1[rand])
-                rectParent1.pop(rand)
             
-            for i in range(2):
-                rand = randint(0,len(rectParent1)-1)
-                rectanglesEnfant.append(rectParent2[rand])
-                rectParent2.pop(rand)
+            coupure=nbRect//2
+            print (coupure)
             
-            enfants.append(Individu(len(self.individus)+1))
-            enfants[len(enfants)-1].rectangles = rectanglesEnfant
+            rectanglesEnfant=parent1.rectangles[:coupure]+parent2.rectangles[coupure:]
+            print(rectanglesEnfant)
+            
+            I=Individu(len(self.individus)+1)
+            I.rectangles=rectanglesEnfant
+            I.genereImg()
+            I.calculCout()
+            enfants.append(I)
         
         return enfants
         
@@ -283,15 +281,15 @@ def draw():
     
     Pop=Population(N)
     Pop.generePop()
-    Pop.drawPop()
-    triFusion(Pop.individus)
-    for ind in Pop.individus:
-        print(ind.cout)
+    #Pop.drawPop()
+    Pop.individus=triFusion(Pop.individus)
+    #for ind in Pop.individus:
+    #    print(ind.cout)
     
-   # Pop2=Population(N+1)
-    #Pop2.individus += Pop.selection()
-    #Pop2.individus+=Pop2.reproductionCroisee(Pop)
-    #Pop2.drawPop()
+    Pop2=Population(N+1)
+    Pop2.individus += Pop.selection()
+    Pop2.individus+=Pop.reproductionCroisee()
+    Pop2.drawPop()
     
     N=N+1 
 
