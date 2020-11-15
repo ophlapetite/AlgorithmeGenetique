@@ -11,9 +11,9 @@ imgWidth=40
 imgHeight=40
 img=None
 indParPopulation=100
-nbSelection=30               #30% de la population est constituée des meilleurs individus de la population précédente
-nbReproCroisee=35   
-nbMutation=35    
+nbSelection=20               #30% de la population est constituée des meilleurs individus de la population précédente
+nbReproCroisee=40 
+nbMutation=40    
 nurserie=[]
 
 ########################Déclaration des Classes####################################
@@ -52,7 +52,7 @@ class Population:
         nurserie=[]
         nurserie=self.selection()
         nurserie+=self.reproductionCroisee()
-        #reste à faire les mutations
+        self.mutation()
         nouvellePop=Population(self.num+1)
         nouvellePop.individus=nurserie
         #nouvellePop.drawPop()
@@ -78,6 +78,10 @@ class Population:
         for ind in self.individus:
             print(ind.cout)
             
+    def meilleurIndividu(self):
+        popTrie = triFusion(self.individus)
+        popTrie[0].drawInd()
+            
     def reproductionCroisee(self):
         global nurserie
         '''
@@ -86,7 +90,7 @@ class Population:
         enfants = []
         rectanglesEnfant = []
     
-        groupeParent = nurserie
+        groupeParent = nurserie[:]
         nb= nbReproCroisee
         for repro in range(nb):
             indice1 = randint(0,len(groupeParent)-1)
@@ -116,12 +120,30 @@ class Population:
         
         return enfants
     
-    #def mutation(self):
-    #    global nurserie
-    #    for i in range(nbMutation):
-    #        indice = randint(0,len(nurserie))
-    #        indAMuter=nurserie[indice]
-   #         for rect in indAMuter.rectangles:
+    def mutation(self):
+        #global nurserie
+        groupeMutation=[]
+        groupeMutation=nurserie[:] #copie sans pointeur
+    
+        for i in range(nbMutation):
+            indice = randint(0,len(groupeMutation)-1)
+            indMutation=groupeMutation[indice]
+            groupeMutation.remove(indMutation)
+            for rect in indMutation.rectangles:
+                mutation=randint(1,4)
+                if(mutation==1):
+                    #on change l'orientation
+                    i = random(1,8)
+                    rect.orientation=i*PI/4
+                elif(mutation==2):
+                    #on change la taille
+                    rect.setLongueur(random(5,20))
+                elif(mutation==3):
+                    #on change les coordonnées
+                    rect.setX(random(0,40)) ; rect.setY(random(0,40))
+        
+            nurserie.append(indMutation)
+
                 
             
         
@@ -305,12 +327,11 @@ def draw():
     Pop=Population(N)
     Pop.generePop()
     #Pop.drawPop()
-    for i in range(30):
+    for i in range(100):
         Pop=Pop.engendrePopulationSuivante()
-    #Pop.engendrePopulationSuivante()
-    #Pop.mutation()
+    #Pop=Pop.engendrePopulationSuivante()
     Pop.drawPop()
-    Pop.afficheCout()
+    #Pop.meilleurIndividu()
 
 
 #####à revoir######
