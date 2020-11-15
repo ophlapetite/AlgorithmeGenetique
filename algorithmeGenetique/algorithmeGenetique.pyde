@@ -1,7 +1,7 @@
 ##################################### PROJET 2020- 2021 ############################
 from random import randint
 ########################Déclaration des paramètres#################################
-global nbRect,LargeurRect,lettre,img,imgWidth,imgHeight, N
+global nbRect,LargeurRect,lettre,img,imgWidth,imgHeight, N, nurserie
 
 N=1 #numéro de génération 
 nbRect=5
@@ -12,8 +12,9 @@ imgHeight=40
 img=None
 indParPopulation=100
 nbSelection=30               #30% de la population est constituée des meilleurs individus de la population précédente
-nbReproCroisee=35       
-
+nbReproCroisee=35   
+nbMutation=35    
+nurserie=[]
 
 ########################Déclaration des Classes####################################
 class Population:
@@ -46,6 +47,17 @@ class Population:
             else:
                 decX += 40
                 
+    def engendrePopulationSuivante(self):
+        global nurserie
+        nurserie=[]
+        nurserie=self.selection()
+        nurserie+=self.reproductionCroisee()
+        #reste à faire les mutations
+        nouvellePop=Population(self.num+1)
+        nouvellePop.individus=nurserie
+        #nouvellePop.drawPop()
+        return nouvellePop
+                
     def selection(self):
         '''
         Fonction qui va selectionner les nbSelection meilleurs individus de Pop
@@ -67,21 +79,21 @@ class Population:
             print(ind.cout)
             
     def reproductionCroisee(self):
+        global nurserie
         '''
         Fonction qui va engendrer la génération suivante en faisant des croisement de 2 parents au hasard
         '''
         enfants = []
         rectanglesEnfant = []
-        
-        groupeParent = self.individus
+    
+        groupeParent = nurserie
         nb= nbReproCroisee
-        
-        for repro in range(nb//2):
-            indice1 = randint(0,nb-1-(repro*2))
+        for repro in range(nb):
+            indice1 = randint(0,len(groupeParent)-1)
             parent1 = groupeParent[indice1]
             groupeParent.pop(indice1)
         
-            indice2 = randint(0,nb-2-(repro*2))
+            indice2 = randint(0,len(groupeParent)-1)
             parent2 = groupeParent[indice2]
             groupeParent.pop(indice2)
         
@@ -89,18 +101,29 @@ class Population:
             rectParent2 = parent2.rectangles
             
             coupure=nbRect//2
-            print (coupure)
             
             rectanglesEnfant=parent1.rectangles[:coupure]+parent2.rectangles[coupure:]
-            print(rectanglesEnfant)
             
-            I=Individu(len(self.individus)+1)
+            I=Individu(len(nurserie)+1)
             I.rectangles=rectanglesEnfant
             I.genereImg()
             I.calculCout()
             enfants.append(I)
+            
+            #on remet les parents dans la liste à leur place initiale pour pouvoir les tirer au sort au prochain tour
+            groupeParent.insert(indice1,parent1)
+            groupeParent.insert(indice2,parent2)
         
         return enfants
+    
+    #def mutation(self):
+    #    global nurserie
+    #    for i in range(nbMutation):
+    #        indice = randint(0,len(nurserie))
+    #        indAMuter=nurserie[indice]
+   #         for rect in indAMuter.rectangles:
+                
+            
         
             
 ####################################################################################
@@ -282,17 +305,12 @@ def draw():
     Pop=Population(N)
     Pop.generePop()
     #Pop.drawPop()
-    Pop.individus=triFusion(Pop.individus)
-    #for ind in Pop.individus:
-    #    print(ind.cout)
-    
-    Pop2=Population(N+1)
-    Pop2.individus += Pop.selection()
-    Pop2.individus+=Pop.reproductionCroisee()
-    Pop2.drawPop()
-    
-    N=N+1 
-
+    for i in range(30):
+        Pop=Pop.engendrePopulationSuivante()
+    #Pop.engendrePopulationSuivante()
+    #Pop.mutation()
+    Pop.drawPop()
+    Pop.afficheCout()
 
 
 #####à revoir######
