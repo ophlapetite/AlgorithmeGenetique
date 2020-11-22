@@ -1,6 +1,8 @@
-##################################### PROJET 2020- 2021 ############################
+##################################### PROJET 2020- 2021 #####################################
 from random import randint
-########################Déclaration des paramètres#################################
+import time #pour mesurer le temps d'execution
+
+########################Déclaration des paramètres########################
 global nbRect,LargeurRect,lettre,img,imgWidth,imgHeight, N, nurserie
 
 N=1 #numéro de génération 
@@ -19,13 +21,19 @@ nurserie=[]
 ########################Déclaration des Classes####################################
 class Population:
     def __init__(self,n):
+        '''
+        Constructeur de la population
+        
+        :param n: Le numéro de la population créée
+        '''
         self.individus=[]       #une liste d'individus initialisée à vide
         self.num=n        #un numéro de population
+        self.laSelection = []
         
     
     def generePop(self):
         '''
-        Fonction qui génère des individus aléatoires et les ajoute pour constituer une population qui servira de base
+        Fonction qui génère des individus aléatoires et les ajoute pour constituer une population
         '''
         for j in range(indParPopulation):
             P1=Individu(j)
@@ -36,7 +44,7 @@ class Population:
         '''
         Fonction qui affiche une population en affichant ses individus un par un avec un décalage
         '''
-        decX = 0  #décalage de l"image en X
+        decX = 0  #décalage de l'image en X
         decY = 0 # décalage de l'image en Y 
         for i in range(len(self.individus)):
             self.individus[i].saveImg()                          #on peut mettre cette ligne en commentaire si on ne veut pas suvegarder chaque image à chaque fois
@@ -48,28 +56,42 @@ class Population:
                 decX += 40
                 
     def engendrePopulationSuivante(self):
-        global nurserie
-        nurserie=[]
-        nurserie=self.selection()
-        nurserie+=self.reproductionCroisee()
-        self.mutation()
-        nouvellePop=Population(self.num+1)
-        nouvellePop.individus=nurserie
+        '''
+        Engendre la population suivante à partie d'une population 'Parente'
+        
+        :return: la nouvelle population créée
+        '''
+        #global nurserie
+        #nurserie=[]
+        
+        self.selection() #la selection des meilleurs individus de la population parente
+        #print([i.cout for i in self.laSelection])
+        self.reproductionCroisee() #enfants créés de la reproduction entre les individus de la population parente
+        self.mutation() #partie de la population parente mutée 
+        #nouvellePop=Population(self.num+1)
+        #nouvellePop.individus = self.laSelection
         #nouvellePop.drawPop()
-        return nouvellePop
+        #print([i.cout for i in nurserie])
+        
+        #return nouvellePop
                 
     def selection(self):
         '''
-        Fonction qui va selectionner les nbSelection meilleurs individus de Pop
+        Fonction qui va selectionner les nbSelection meilleurs individus d'une population
         '''
+        #global nurserie
         popTrie = triFusion(self.individus)
         meilleurPatrimoine = []
-        
+        #print("-->",[i.cout for i in popTrie])
         for i in range(nbSelection):
-            meilleurPatrimoine.append(popTrie[i])
+            I=Individu(len(self.laSelection)+1)
+            I.rectangles=popTrie[i].rectangles
+            #print("+*+*+*+*+*+* ",[ (rectangle.x,rectangle.y,rectangle.orientation,rectangle.longueur) for rectangle in popTrie[i].rectangles])
+            I.genereImg()
+            I.calculCout()
+            self.laSelection.append(I)
             
-        return meilleurPatrimoine
-        
+                    
         
     def afficheCout(self):
         '''
@@ -79,20 +101,26 @@ class Population:
             print(ind.cout)
             
     def meilleurIndividu(self):
+        '''
+        Affiche le meilleur individu d'une population
+        '''
         popTrie = triFusion(self.individus)
         popTrie[0].drawInd()
             
     def reproductionCroisee(self):
-        global nurserie
         '''
         Fonction qui va engendrer la génération suivante en faisant des croisement de 2 parents au hasard
         '''
-        enfants = []
-        rectanglesEnfant = []
-    
-        groupeParent = nurserie[:]
+        #global nurserie
+
+        #ici modif !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        #groupeParent = nurserie[:]
+        groupeParent = self.individus
+        
         nb= nbReproCroisee
         for repro in range(nb):
+            rectanglesEnfant = []
+
             indice1 = randint(0,len(groupeParent)-1)
             parent1 = groupeParent[indice1]
             groupeParent.pop(indice1)
@@ -108,64 +136,130 @@ class Population:
             
             rectanglesEnfant=parent1.rectangles[:coupure]+parent2.rectangles[coupure:]
             
-            I=Individu(len(nurserie)+1)
+            #on créé le fils résultant
+            I=Individu(len(self.laSelection)+1)
             I.rectangles=rectanglesEnfant
             I.genereImg()
             I.calculCout()
-            enfants.append(I)
+            self.laSelection.append(I)
             
             #on remet les parents dans la liste à leur place initiale pour pouvoir les tirer au sort au prochain tour
             groupeParent.insert(indice1,parent1)
             groupeParent.insert(indice2,parent2)
-        
-        return enfants
+                    
     
     def mutation(self):
+        '''
+        Un individu subissant une mutation génétique voit un ou plusieurs de ses gènes modifiés
+        '''
         #global nurserie
-        groupeMutation=[]
-        groupeMutation=nurserie[:] #copie sans pointeur
+        #ici modification !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        #groupeMutation=[] ???????????????????????????????????????????????????????????????????????????????????????
+        #groupeMutation=nurserie[:] #copie sans pointeur
+        groupeMutation=self.individus
+        enfants = []
     
         for i in range(nbMutation):
             indice = randint(0,len(groupeMutation)-1)
             indMutation=groupeMutation[indice]
             groupeMutation.remove(indMutation)
-            for rect in indMutation.rectangles:
-                mutation=randint(1,4)
-                if(mutation==1):
-                    #on change l'orientation
-                    i = random(1,8)
-                    rect.orientation=i*PI/4
-                elif(mutation==2):
-                    #on change la taille
-                    rect.setLongueur(random(5,20))
-                elif(mutation==3):
-                    #on change les coordonnées
-                    rect.setX(random(0,40)) ; rect.setY(random(0,40))
-        
-            nurserie.append(indMutation)
-
-                
+            coutInitial = indMutation.cout
+            coutApres = -1
+            I=Individu(N*1000+len(self.laSelection)+1)
+            #print("-------------------------------------------------",coutInitial)
+            #print("--------------------------------mutation--------------------------------") à enlever !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            #print(indMutation.cout) à enlever !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+            while (coutApres < coutInitial) and (coutApres < 30):
+                I.rectangles=indMutation.rectangles
+                lesRects = []
+                for rect in I.rectangles:
+                    mutation=randint(1,4)
+                    newRec = Rectangle(1)
+                    
+                    if(mutation==1):
+                        #on change l'orientation
+                        i = random(1,8)
+                        newRec.orientation=i*PI/4
+                        newRec.longueur = rect.longueur
+                        newRec.x = rect.x
+                        newRec.y = rect.y
+                    elif(mutation==2):
+                        #on change la taille
+                        newRec.setLongueur(random(5,20))
+                        newRec.x = rect.x
+                        newRec.y = rect.y
+                        newRec.orientation = rect.orientation
+                    elif(mutation==3):
+                        #on change les coordonnées
+                        newRec.setX(random(0,40)) ; newRec.setY(random(0,40))
+                        newRec.orientation = rect.orientation
+                        newRec.longueur = rect.longueur
+                    elif(mutation==4):
+                        i = random(1,8)
+                        newRec.orientation=i*PI/4
+                        newRec.setLongueur(random(5,20))
+                        newRec.setX(random(0,40)) ; newRec.setY(random(0,40))
+                    lesRects.append(newRec)
+                    
+                I.rectangles=lesRects
+                        
+                I.genereImg()
+                I.calculCout()
+                coutApres = I.cout
+                #print(coutApres)
             
+            #print(indMutation.cout) à enlever !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            self.laSelection.append(I)
+            
+
+    def stats(self):
+        '''
+        méthode pour faire les statistiques du programme
+        '''
+        coutMin = 101
+        coutMax = -1
+        coutMoyen = 0
+        
+        for ind in self.individus:
+            coutMoyen += ind.cout
+            
+            #min
+            if(ind.cout < coutMin):
+                coutMin = ind.cout
+                
+            #max
+            if(ind.cout > coutMax):
+                coutMax = ind.cout
+                
+        #moyenne
+        coutMoyen = coutMoyen/indParPopulation
+        
+        print("Min : ",coutMin,", Max : ",coutMax,", coutMoyen : ",coutMoyen) 
         
             
 ####################################################################################
 class Individu:
     def __init__(self,n):
+        '''
+        Constructeur d'individu
+        
+        :param n: Le numéro de l'individu créé
+        '''
         self.rectangles=[]     #une liste de rectangles
         self.cout=0
         self.numero=n
         self.img=createGraphics(imgWidth,imgHeight)
         
-    """def __init__(self,n, rects = []):
-        self.rectangles=rects     #une liste de rectangles
-        self.cout=0
-        self.numero=n
-        self.img=createGraphics(imgWidth,imgHeight)"""
-        
     def getNum(self):
+        '''
+        retourne le numéro de l'individu
+        '''
         return self.numero
     
     def getCout(self):
+        '''
+        retourne le cout de l'individu
+        '''
         return self.cout
     
     def genereInd(self):
@@ -180,9 +274,9 @@ class Individu:
         self.calculCout()
         
     def genereRect(self):
-        """
+        '''
         Fonction qui génère des rectangles aléatoires et les stockes dans rectangles
-        """
+        '''
         for j in range(nbRect):
             i = random(1,8)
             r=Rectangle(i)
@@ -192,9 +286,9 @@ class Individu:
             
             
     def genereImg(self):
-        """
+        '''
         Fonction qui génère l'image de l'individu, affiche la lettre en rouge et les rectangles en vert 
-        """
+        '''
         self.img.noSmooth()
         self.img.beginDraw()
         self.img.background(255)
@@ -215,9 +309,9 @@ class Individu:
         self.img.endDraw()
         
     def calculCout(self):
-        """
+        '''
         Fonction qui calcule le cout de l'individu en fonction de la répartition des couleurs des pixels de son image
-        """
+        '''
         pB=0.0 #nb pixels blancs
         pR=0.0 # rouges
         pV=0.0 #verts
@@ -238,49 +332,78 @@ class Individu:
         self.cout=int((pA/(pR+pA))*100)
         
     def drawInd(self):
-        """
+        '''
         Fonction qui affiche à l'écran l'image d'un individu
-        """
+        '''
         image(self.img,0,0)
         
     def saveImg(self):
-        """
+        '''
         Fonction qui sauvegarde au format jpg l'image de l'individu
-        """
-        self.img.save('essai'+str(self.getNum())+'.jpg')
-
-        
-        
-
+        '''
+        self.img.save('essai_'+str(N)+'_'+str(self.getNum())+'.jpg')
+                
                     
 ########################################################################################   
 class Rectangle:
     def __init__(self,i):
-        self.orientation=i*PI/4    # 8 orientations possibles, valeur i comprise entre 1 et 8
+        '''
+        Constructeur d'individu
+        
+        :param i: entier compris entre 1 et 8 
+        '''
+        self.orientation=i*PI/4    # 8 orientations possibles, valeur i comprise entre 1 et 8 ????????????????????????????????????????????????????? pk pas faire le random ici ?
         self.largeur=largeurRect
         self.longueur=0
         self.x=0
         self.y=0
         
     def getLongueur(self):
+        '''
+        retourne la longueur du rectangle
+        '''
         return self.longueur
     
     def getOrientation(self):
+        '''
+        retourne l'orientation du rectangle
+        '''
         return self.orientation
     
     def getX(self):
+        '''
+        retourne la position en x du rectangle
+        '''
         return self.x
     
     def getY(self):
+        '''
+        retourne la position en y du rectangle
+        '''
         return self.y
     
     def setLongueur(self,l):
+        '''
+        donne une longueur au rectangle
+        
+        :param l: entier
+        '''
         self.longueur=l
         
     def setX(self,val):
+        '''
+        donne une position en x au rectangle
+        
+        :param val: entier
+        '''
         self.x=val
         
     def setY(self,val):
+        '''
+        donne une position en y au rectangle
+        
+        :param val: entier
+        '''
         self.y=val
 ############################Autres fonctions utiles################################
 
@@ -323,19 +446,38 @@ def setup():
 ####################################################################################    
 def draw():
     global N
+    tempsExec = range(100000)
+    
+    tps1 = time.clock()
+    #random.shuffle(1)
+    tempsExec.sort()
     
     Pop=Population(N)
     Pop.generePop()
     #Pop.drawPop()
+    print("----------- Les stats -----------")
+
     for i in range(100):
-        Pop=Pop.engendrePopulationSuivante()
+        N += 1
+        nouvellePop=Population(N)
+        Pop.engendrePopulationSuivante()
+        nouvellePop.individus = Pop.laSelection
+        nouvellePop.stats()
+        Pop.laSelection = []
+        Pop.individus = nouvellePop.individus
+        
     #Pop=Pop.engendrePopulationSuivante()
-    Pop.drawPop()
-    #Pop.meilleurIndividu()
+    print("-----------")
+    #Pop.drawPop()
+    nouvellePop.meilleurIndividu()
 
-
+    #mesure du temps d'execution
+    tps2 = time.clock()
+    print("temps d'execution : ",tps2-tps1, " secondes.")
+     
 #####à revoir######
     #def keyPressed():
     #global lettre
     #lettre=key
     
+####https://saladtomatonion.com/blog/2014/12/16/mesurer-le-temps-dexecution-de-code-en-python/
