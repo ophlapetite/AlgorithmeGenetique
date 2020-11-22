@@ -8,14 +8,14 @@ global nbRect,LargeurRect,lettre,img,imgWidth,imgHeight, N, nurserie
 N=1 #numéro de génération 
 nbRect=5
 largeurRect=4 
-lettre='A'
+lettre='D'
 imgWidth=40
 imgHeight=40
 img=None
 indParPopulation=100
-nbSelection=20               #30% de la population est constituée des meilleurs individus de la population précédente
-nbReproCroisee=40 
-nbMutation=40    
+nbSelection=30               #30% de la population est constituée des meilleurs individus de la population précédente
+nbReproCroisee=35
+nbMutation=35    
 nurserie=[]
 
 ########################Déclaration des Classes####################################
@@ -105,7 +105,7 @@ class Population:
         Affiche le meilleur individu d'une population
         '''
         popTrie = triFusion(self.individus)
-        popTrie[0].drawInd()
+        popTrie[0].drawIndBlack()
             
     def reproductionCroisee(self):
         '''
@@ -342,6 +342,25 @@ class Individu:
         Fonction qui sauvegarde au format jpg l'image de l'individu
         '''
         self.img.save('essai_'+str(N)+'_'+str(self.getNum())+'.jpg')
+        
+    def drawIndBlack(self):
+        '''
+        Fonction qui affiche l'individu en noir sans la lettre rouge en dessous
+        '''
+        self.img=createGraphics(imgWidth,imgHeight)
+        self.img.beginDraw()
+        self.img.background(255)
+        self.img.fill(0,0,0)
+        
+        for rectangle in self.rectangles :
+            self.img.pushMatrix()
+            self.img.translate(rectangle.getX(),rectangle.getY())
+            self.img.rotate(rectangle.getOrientation())
+            self.img.rect(0,0,rectangle.getLongueur(),largeurRect)
+            self.img.popMatrix()
+        self.img.endDraw()
+        image(self.img,0,0)
+        
                 
                     
 ########################################################################################   
@@ -457,7 +476,7 @@ def draw():
     #Pop.drawPop()
     print("----------- Les stats -----------")
 
-    for i in range(100):
+    for i in range(50):
         N += 1
         nouvellePop=Population(N)
         Pop.engendrePopulationSuivante()
