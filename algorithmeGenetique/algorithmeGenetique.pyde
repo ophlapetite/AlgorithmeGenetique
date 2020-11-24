@@ -1,40 +1,42 @@
-##################################### PROJET 2020- 2021 #####################################
-from random import randint
-import time #pour mesurer le temps d'execution
+################################################################################### PROJET PYTHON 2020- 2021 ############################################################################################
 
-########################Déclaration des paramètres########################
-global nbRect,LargeurRect,lettre,img,imgWidth,imgHeight, N, nurserie
+from random import randint  #pour obtenir des entiers aléatoires
+import time                 #pour mesurer le temps d'execution
 
-N=1 #numéro de génération 
-nbRect=5
-largeurRect=4 
-lettre='A'
-imgWidth=40
-imgHeight=40
-img=None
-indParPopulation=100
-nbSelection=30               #30% de la population est constituée des meilleurs individus de la population précédente
-nbReproCroisee=35
-nbMutation=35    
-nurserie=[]
+#########################################################################################RÉGLAGES########################################################################################################
 
-########################Déclaration des Classes####################################
+N=1                         #numéro de génération 
+nbRect=5                    #nombre de rectangles par individu
+largeurRect=4               #largeur fixe des rectangles
+lettre='A'                  #glyphe à approcher
+imgWidth=40                 #largeur de l'image 
+imgHeight=40                #hauteur de l'image                  
+indParPopulation=100        #nombre d'individus par population 
+nbSelection=30              #50% de la population est constituée des meilleurs individus de la population précédente
+nbReproCroisee=35           #25% de la population est constituée des enfants engendrés par reproduction croisée
+nbMutation=35               #25% de la population est constituée des individus mutés de la nurserie
+nurserie=[]                 # déclaration de la liste représentant la nurserie 
+
+###################################################################################### CLASSE POPULATION ################################################################################################
+
 class Population:
+    
+    
     def __init__(self,n):
         '''
-        Constructeur de la population
+        Constructeur d'une population
         
         :param n: Le numéro de la population créée
         '''
-        self.individus=[]       #une liste d'individus initialisée à vide
-        self.num=n        #un numéro de population        
-    
+        self.individus=[]     #une liste d'individus initialisée à vide
+        self.num=n            #numéro de génération correspondant        
+
     def generePop(self):
         '''
-        Fonction qui génère des individus aléatoires et les ajoute pour constituer une population
+        Fonction qui génère des individus aléatoires et les ajoute à la liste d'individus pour constituer une première population
         '''
         for j in range(indParPopulation):
-            P1=Individu(j)
+            P1=Individu(j)                 
             P1.genereInd()
             self.individus.append(P1)
             
@@ -42,12 +44,12 @@ class Population:
         '''
         Fonction qui affiche une population en affichant ses individus un par un avec un décalage
         '''
-        decX = 0  #décalage de l'image en X
-        decY = 0 # décalage de l'image en Y 
+        decX = 0                                                  #décalage de l'image en X
+        decY = 0                                                  # décalage de l'image en Y 
         for i in range(len(self.individus)):
-            self.individus[i].saveImg()                          #on peut mettre cette ligne en commentaire si on ne veut pas suvegarder chaque image à chaque fois
-            image(self.individus[i].img,decX,decY)
-            if (i+1)%10 == 0 and i != 0 :
+            #self.individus[i].saveImg()                          #on peut mettre cette ligne en commentaire si on ne veut pas sauvegarder toutes les images à chaque fois
+            image(self.individus[i].img,decX,decY)                #affiche l'image dans la fenêtre à la position donnée
+            if (i+1)%10 == 0 and i != 0 :                         
                 decY += 40
                 decX = 0
             else:
@@ -60,43 +62,24 @@ class Population:
         :return: la nouvelle population créée
         '''
         global nurserie
-        nurserie=[]
         
-        nurserie = self.selection() #la selection des meilleurs individus de la population parente
-        nurserie += self.reproductionCroisee() #enfants créés de la reproduction entre les individus de la population parente
-        nurserie += self.mutation() #partie de la population parente mutée 
+        nurserie = self.selection()                                #la selection des meilleurs individus de la population parente
+        nurserie += self.reproductionCroisee()                     #enfants créés par reproduction entre les meilleurs individus de la population parente
+        nurserie += self.mutation()                                #partie de la population parente mutée 
                 
     def selection(self):
         '''
-        Fonction qui va selectionner les nbSelection meilleurs individus d'une population
+        Fonction qui va selectionner les n meilleurs individus d'une population
         '''
-        popTrie = triFusion(self.individus)
-        meilleurPatrimoine = []
-
-        for i in range(nbSelection):
-            meilleurPatrimoine.append(popTrie[i])
-            
-        return meilleurPatrimoine           
+        popTriee = triFusion(self.individus)
+        return popTriee[:nbSelection+1]         
         
-    def afficheCout(self):
-        '''
-        Fonction qui va afficher les couts de chaque individus d'une population
-        '''
-        for ind in self.individus:
-            print(ind.cout)
-            
-    def meilleurIndividu(self):
-        '''
-        Affiche le meilleur individu d'une population
-        '''
-        popTrie = triFusion(self.individus)
-        popTrie[0].drawIndBlack()
             
     def reproductionCroisee(self):
         '''
-        Fonction qui va engendrer la génération suivante en faisant des croisement de 2 parents au hasard
+        Fonction qui va engendrer la génération suivante en faisant des croisements de 2 parents au hasard
         '''
-        groupeParent = nurserie[:]
+        groupeParent = self.individus
         laSelection = []
         
         nb= nbReproCroisee
@@ -187,11 +170,25 @@ class Population:
             enfants.append(I)
             
         return enfants
+    
+    def afficheCout(self):
+        '''
+        Fonction qui va afficher les coûts de chaque individu d'une population
+        '''
+        for ind in self.individus:
+            print(ind.cout)
+            
+    def meilleurIndividu(self):
+        '''
+        Affiche le meilleur individu d'une population
+        '''
+        popTrie = triFusion(self.individus)
+        popTrie[0].drawIndBlack()
             
 
     def stats(self):
         '''
-        méthode pour faire les statistiques du programme
+        Affichage console des statistiques liées au coût des individus 
         '''
         coutMin = 101
         coutMax = -1
@@ -211,10 +208,10 @@ class Population:
         #moyenne
         coutMoyen = coutMoyen/indParPopulation
         
-        print("Min : ",coutMin,", Max : ",coutMax,", coutMoyen : ",coutMoyen) 
+        print("Cout Min : "+str(coutMin)+ ", Cout Max : "+str(coutMax)+", Cout Moyen : "+str(coutMoyen)+" Generation :"+str(N)) 
         
             
-####################################################################################
+############################################################################################# CLASSE INDIVIDU ##########################################################################################
 class Individu:
     def __init__(self,n):
         '''
@@ -222,10 +219,10 @@ class Individu:
         
         :param n: Le numéro de l'individu créé
         '''
-        self.rectangles=[]     #une liste de rectangles
+        self.rectangles=[]                                 #une liste de rectangles
         self.cout=0
         self.numero=n
-        self.img=createGraphics(imgWidth,imgHeight)
+        self.img=createGraphics(imgWidth,imgHeight)       #création d'une image de 40*40pixels
         
     def getNum(self):
         '''
@@ -252,7 +249,7 @@ class Individu:
         
     def genereRect(self):
         '''
-        Fonction qui génère des rectangles aléatoires et les stockes dans rectangles
+        Fonction qui génère des rectangles aléatoires et les stockes dans la liste de rectangles
         '''
         for j in range(nbRect):
             i = random(1,8)
@@ -322,7 +319,7 @@ class Individu:
         
     def drawIndBlack(self):
         '''
-        Fonction qui affiche l'individu en noir sans la lettre rouge en dessous
+        Fonction qui affiche l'image d'un individu en noir sans la lettre rouge en dessous
         '''
         self.img=createGraphics(imgWidth,imgHeight)
         self.img.beginDraw()
@@ -340,7 +337,7 @@ class Individu:
         
                 
                     
-########################################################################################   
+######################################################################################## CLASSE RECTANGLE ###############################################################################################
 class Rectangle:
     def __init__(self,i):
         '''
@@ -401,7 +398,8 @@ class Rectangle:
         :param val: entier
         '''
         self.y=val
-############################Autres fonctions utiles################################
+        
+############################################################################################ MÉTHODES DE TRI #############################################################################################
 
 
 def fusion(gauche,droite):
@@ -433,17 +431,17 @@ def triFusion(m):
     return list(fusion(gauche, droite))
 
         
-############################Initialisation de la fenêtre###########################        
+###################################################################################### INITIALISATION DE LA FENETRE ######################################################################################        
 def setup():
     
     size(400,400)
-    noLoop()
+    #noLoop()              #on peut le mettre en paramètre si on veut que la fonction draw s'exécute en boucle
     
-####################################################################################    
+##########################################################################################################################################################################################################    
 def draw():
     global N
-    tempsExec = range(100000)
     
+    tempsExec = range(100000)
     tps1 = time.clock()
     tempsExec.sort()
     
@@ -451,7 +449,7 @@ def draw():
     Pop.generePop()
     print("----------- Les stats -----------")
 
-    for i in range(50):
+    for i in range(100):
         N += 1
         nouvellePop=Population(N)
         Pop.engendrePopulationSuivante()
@@ -460,15 +458,11 @@ def draw():
         Pop.individus = nouvellePop.individus
         
     print("-----------")
+    #affichage du meilleur individu
     nouvellePop.meilleurIndividu()
+    #affichage de la population finale
+    #nouvellePop.drawPop()
 
     #mesure du temps d'execution
     tps2 = time.clock()
     print("temps d'execution : ",tps2-tps1, " secondes.")
-     
-#####à revoir######
-    #def keyPressed():
-    #global lettre
-    #lettre=key
-    
-####https://saladtomatonion.com/blog/2014/12/16/mesurer-le-temps-dexecution-de-code-en-python/
