@@ -8,7 +8,7 @@ global nbRect,LargeurRect,lettre,img,imgWidth,imgHeight, N, nurserie
 N=1 #numéro de génération 
 nbRect=5
 largeurRect=4 
-lettre='D'
+lettre='A'
 imgWidth=40
 imgHeight=40
 img=None
@@ -27,9 +27,7 @@ class Population:
         :param n: Le numéro de la population créée
         '''
         self.individus=[]       #une liste d'individus initialisée à vide
-        self.num=n        #un numéro de population
-        self.laSelection = []
-        
+        self.num=n        #un numéro de population        
     
     def generePop(self):
         '''
@@ -61,37 +59,24 @@ class Population:
         
         :return: la nouvelle population créée
         '''
-        #global nurserie
-        #nurserie=[]
+        global nurserie
+        nurserie=[]
         
-        self.selection() #la selection des meilleurs individus de la population parente
-        #print([i.cout for i in self.laSelection])
-        self.reproductionCroisee() #enfants créés de la reproduction entre les individus de la population parente
-        self.mutation() #partie de la population parente mutée 
-        #nouvellePop=Population(self.num+1)
-        #nouvellePop.individus = self.laSelection
-        #nouvellePop.drawPop()
-        #print([i.cout for i in nurserie])
-        
-        #return nouvellePop
+        nurserie = self.selection() #la selection des meilleurs individus de la population parente
+        nurserie += self.reproductionCroisee() #enfants créés de la reproduction entre les individus de la population parente
+        nurserie += self.mutation() #partie de la population parente mutée 
                 
     def selection(self):
         '''
         Fonction qui va selectionner les nbSelection meilleurs individus d'une population
         '''
-        #global nurserie
         popTrie = triFusion(self.individus)
         meilleurPatrimoine = []
-        #print("-->",[i.cout for i in popTrie])
+
         for i in range(nbSelection):
-            I=Individu(len(self.laSelection)+1)
-            I.rectangles=popTrie[i].rectangles
-            #print("+*+*+*+*+*+* ",[ (rectangle.x,rectangle.y,rectangle.orientation,rectangle.longueur) for rectangle in popTrie[i].rectangles])
-            I.genereImg()
-            I.calculCout()
-            self.laSelection.append(I)
+            meilleurPatrimoine.append(popTrie[i])
             
-                    
+        return meilleurPatrimoine           
         
     def afficheCout(self):
         '''
@@ -111,11 +96,8 @@ class Population:
         '''
         Fonction qui va engendrer la génération suivante en faisant des croisement de 2 parents au hasard
         '''
-        #global nurserie
-
-        #ici modif !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #groupeParent = nurserie[:]
-        groupeParent = self.individus
+        groupeParent = nurserie[:]
+        laSelection = []
         
         nb= nbReproCroisee
         for repro in range(nb):
@@ -137,40 +119,35 @@ class Population:
             rectanglesEnfant=parent1.rectangles[:coupure]+parent2.rectangles[coupure:]
             
             #on créé le fils résultant
-            I=Individu(len(self.laSelection)+1)
+            I=Individu(len(nurserie)+len(laSelection)+1)
             I.rectangles=rectanglesEnfant
             I.genereImg()
             I.calculCout()
-            self.laSelection.append(I)
+            laSelection.append(I)
             
             #on remet les parents dans la liste à leur place initiale pour pouvoir les tirer au sort au prochain tour
             groupeParent.insert(indice1,parent1)
             groupeParent.insert(indice2,parent2)
-                    
+            
+        return laSelection
     
     def mutation(self):
         '''
         Un individu subissant une mutation génétique voit un ou plusieurs de ses gènes modifiés
         '''
-        #global nurserie
-        #ici modification !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #groupeMutation=[] ???????????????????????????????????????????????????????????????????????????????????????
-        #groupeMutation=nurserie[:] #copie sans pointeur
-        groupeMutation=self.individus
+        groupeMutation = nurserie[:] #copie sans pointeur
         enfants = []
     
         for i in range(nbMutation):
             indice = randint(0,len(groupeMutation)-1)
-            indMutation=groupeMutation[indice]
+            indMutation = groupeMutation[indice]
             groupeMutation.remove(indMutation)
             coutInitial = indMutation.cout
             coutApres = -1
-            I=Individu(N*1000+len(self.laSelection)+1)
-            #print("-------------------------------------------------",coutInitial)
-            #print("--------------------------------mutation--------------------------------") à enlever !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            #print(indMutation.cout) à enlever !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-            while (coutApres < coutInitial) and (coutApres < 30):
-                I.rectangles=indMutation.rectangles
+            I = Individu(len(nurserie)+len(enfants)+1)
+            #coef à changer ?
+            while (coutApres < coutInitial*0.50):
+                I.rectangles = indMutation.rectangles
                 lesRects = []
                 for rect in I.rectangles:
                     mutation=randint(1,4)
@@ -206,10 +183,10 @@ class Population:
                 I.genereImg()
                 I.calculCout()
                 coutApres = I.cout
-                #print(coutApres)
             
-            #print(indMutation.cout) à enlever !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            self.laSelection.append(I)
+            enfants.append(I)
+            
+        return enfants
             
 
     def stats(self):
@@ -371,7 +348,7 @@ class Rectangle:
         
         :param i: entier compris entre 1 et 8 
         '''
-        self.orientation=i*PI/4    # 8 orientations possibles, valeur i comprise entre 1 et 8 ????????????????????????????????????????????????????? pk pas faire le random ici ?
+        self.orientation=i*PI/4    # 8 orientations possibles, valeur i comprise entre 1 et 8
         self.largeur=largeurRect
         self.longueur=0
         self.x=0
@@ -468,26 +445,21 @@ def draw():
     tempsExec = range(100000)
     
     tps1 = time.clock()
-    #random.shuffle(1)
     tempsExec.sort()
     
     Pop=Population(N)
     Pop.generePop()
-    #Pop.drawPop()
     print("----------- Les stats -----------")
 
     for i in range(50):
         N += 1
         nouvellePop=Population(N)
         Pop.engendrePopulationSuivante()
-        nouvellePop.individus = Pop.laSelection
+        nouvellePop.individus = nurserie
         nouvellePop.stats()
-        Pop.laSelection = []
         Pop.individus = nouvellePop.individus
         
-    #Pop=Pop.engendrePopulationSuivante()
     print("-----------")
-    #Pop.drawPop()
     nouvellePop.meilleurIndividu()
 
     #mesure du temps d'execution
