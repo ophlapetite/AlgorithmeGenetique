@@ -303,7 +303,7 @@ class Individu:
                     else:
                         pA=pA+1
         
-        self.cout=int((pA/(pR+pA))*100)
+        self.cout=int((pA/(pR+pV))*100)
         
     def drawInd(self):
         '''
@@ -435,7 +435,7 @@ def triFusion(m):
 def setup():
     
     size(400,400)
-    #noLoop()              #on peut le mettre en paramètre si on veut que la fonction draw s'exécute en boucle
+    noLoop()              #on peut le mettre en commentaire si on veut que la fonction draw s'exécute en boucle
     
 ##########################################################################################################################################################################################################    
 def draw():
