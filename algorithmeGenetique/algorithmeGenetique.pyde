@@ -6,16 +6,17 @@ N=1                         #numéro de génération
 nurserie=[]                 # déclaration de la liste représentant la nurserie 
 #########################################################################################RÉGLAGES########################################################################################################
 
+nbGeneration=100            #nombre de générations à engendrer
 nbRect=5                    #nombre de rectangles par individu
 largeurRect=4               #largeur fixe des rectangles
 lettre='A'                  #glyphe à approcher
 imgWidth=40                 #largeur de l'image 
 imgHeight=40                #hauteur de l'image                  
 indParPopulation=100        #nombre d'individus par population 
-nbSelection=40              #nombre d'individus sélectionnés
-nbReproCroisee=30           #nombre d'individus engendrés par reproduction croisée
-nbMutation=30               #nombre d'individus mutés dans la nurserie
-coefMutation=0.4            #coefficient du cout initial qui doit être supérieur au coût après mutation
+nbSelection=50              #nombre d'individus sélectionnés
+nbReproCroisee=25           #nombre d'individus engendrés par reproduction croisée
+nbMutation=25               #nombre d'individus mutés dans la nurserie
+coefMutation=0.5            #coefficient du cout initial qui doit être supérieur au coût après mutation
 
 ###################################################################################### CLASSE POPULATION ################################################################################################
 
@@ -57,7 +58,7 @@ class Population:
                 
     def engendrePopulationSuivante(self):
         '''
-        Engendre la population suivante à partie d'une population 'Parente'
+        Engendre la population suivante à partir d'une population 'Parente'
         
         :return: la nouvelle population créée
         '''
@@ -449,7 +450,7 @@ def draw():
     Pop.generePop()
     print("----------- Les stats -----------")
 
-    for i in range(100):
+    for i in range(nbGeneration):
         N += 1
         nouvellePop=Population(N)
         Pop.engendrePopulationSuivante()
