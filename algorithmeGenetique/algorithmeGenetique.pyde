@@ -2,10 +2,10 @@
 
 from random import randint  #pour obtenir des entiers aléatoires
 import time                 #pour mesurer le temps d'execution
-
+N=1                         #numéro de génération 
+nurserie=[]                 # déclaration de la liste représentant la nurserie 
 #########################################################################################RÉGLAGES########################################################################################################
 
-N=1                         #numéro de génération 
 nbRect=5                    #nombre de rectangles par individu
 largeurRect=4               #largeur fixe des rectangles
 lettre='A'                  #glyphe à approcher
@@ -15,7 +15,7 @@ indParPopulation=100        #nombre d'individus par population
 nbSelection=30              #50% de la population est constituée des meilleurs individus de la population précédente
 nbReproCroisee=35           #25% de la population est constituée des enfants engendrés par reproduction croisée
 nbMutation=35               #25% de la population est constituée des individus mutés de la nurserie
-nurserie=[]                 # déclaration de la liste représentant la nurserie 
+coefMutation=0.4            #coefficient du cout initial qui doit être supérieur au coût après mutation
 
 ###################################################################################### CLASSE POPULATION ################################################################################################
 
@@ -128,8 +128,8 @@ class Population:
             coutInitial = indMutation.cout
             coutApres = -1
             I = Individu(len(nurserie)+len(enfants)+1)
-            #coef à changer ?
-            while (coutApres < coutInitial*0.50):
+            #coef modifiable
+            while (coutApres < coutInitial*coefMutation):
                 I.rectangles = indMutation.rectangles
                 lesRects = []
                 for rect in I.rectangles:
@@ -303,7 +303,7 @@ class Individu:
                     else:
                         pA=pA+1
         
-        self.cout=int((pA/(pR+pV))*100)
+        self.cout=int((pA/(pR+pV+pA))*100)
         
     def drawInd(self):
         '''
