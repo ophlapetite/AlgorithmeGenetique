@@ -4,19 +4,22 @@ from random import randint  #pour obtenir des entiers aléatoires
 import time                 #pour mesurer le temps d'execution
 N=1                         #numéro de génération 
 nurserie=[]                 # déclaration de la liste représentant la nurserie 
+saveStats= True             #remplir ou non le fichier csv pour faire un graphique
 #########################################################################################RÉGLAGES########################################################################################################
 
-nbGeneration=100            #nombre de générations à engendrer
+nbGeneration=100            #nombre de générations à engendrer 
 nbRect=5                    #nombre de rectangles par individu
 largeurRect=4               #largeur fixe des rectangles
 lettre='A'                  #glyphe à approcher
 imgWidth=40                 #largeur de l'image 
 imgHeight=40                #hauteur de l'image                  
 indParPopulation=100        #nombre d'individus par population 
-nbSelection=50              #nombre d'individus sélectionnés
-nbReproCroisee=25           #nombre d'individus engendrés par reproduction croisée
-nbMutation=25               #nombre d'individus mutés dans la nurserie
-coefMutation=0.5            #coefficient du cout initial qui doit être supérieur au coût après mutation
+nbSelection=40              #nombre d'individus sélectionnés
+nbReproCroisee=30           #nombre d'individus engendrés par reproduction croisée
+nbMutation=30               #nombre d'individus mutés dans la nurserie
+coefMutation=0.4            #coefficient du cout initial qui doit être supérieur au coût après mutation
+decOrdo = 100               #décalage de l'axe en ordonnée pour tracer le graphique
+graduation = 100/10         #Nb de générations sur le nombre de graduations 
 
 ###################################################################################### CLASSE POPULATION ################################################################################################
 
@@ -58,7 +61,7 @@ class Population:
                 
     def engendrePopulationSuivante(self):
         '''
-        Engendre la population suivante à partir d'une population 'Parente'
+        Engendre la population suivante à partie d'une population 'Parente'
         
         :return: la nouvelle population créée
         '''
@@ -209,8 +212,13 @@ class Population:
         #moyenne
         coutMoyen = coutMoyen/indParPopulation
         
-        print("Cout Min : "+str(coutMin)+ ", Cout Max : "+str(coutMax)+", Cout Moyen : "+str(coutMoyen)+" Generation :"+str(N)) 
-        
+        print("Cout Min : "+str(coutMin)+ ", Cout Max : "+str(coutMax)+", Cout Moyen : "+str(coutMoyen)+" Generation :"+str(N))
+        if(saveStats == True):
+            file=open("stats.csv","a")
+            line=str(coutMin)+";"+str(coutMoyen)+";"+str(coutMax)
+            file.write(line)
+            file.write("\n")
+            file.close()
             
 ############################################################################################# CLASSE INDIVIDU ##########################################################################################
 class Individu:
@@ -422,6 +430,9 @@ def fusion(gauche,droite):
     return resultat
     
 def triFusion(m):
+    """
+    Fonction qui trie le tableau passé en paramètre
+    """
     if len(m) <= 1:
         return m
     milieu = len(m)//2
@@ -438,13 +449,24 @@ def setup():
     size(400,400)
     noLoop()              #on peut le mettre en commentaire si on veut que la fonction draw s'exécute en boucle
     
+    
 ##########################################################################################################################################################################################################    
 def draw():
     global N
     
+    #remise à 0 du fichier csv
+    if(saveStats==True):
+        file=open('stats.csv', 'w')
+        line="Cout Minimum;Cout Moyen; Cout Maximum"
+        file.write(line)
+        file.write("\n")
+        file.close() 
+        
+    #début du calcul du temps d'exécution
     tempsExec = range(100000)
     tps1 = time.clock()
     tempsExec.sort()
+    
     
     Pop=Population(N)
     Pop.generePop()
