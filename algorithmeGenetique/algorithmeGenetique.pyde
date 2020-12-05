@@ -9,7 +9,7 @@ saveTmpExec= False          #enregistrer ou nom le temps d'execution dans un fic
 #########################################################################################RÉGLAGES########################################################################################################
 
 nbGeneration=100            #nombre de générations à engendrer 
-nbRect=7                    #nombre de rectangles par individu
+nbRect=5                    #nombre de rectangles par individu
 largeurRect=4               #largeur fixe des rectangles
 lettre='A'                  #glyphe à approcher
 imgWidth=40                 #largeur de l'image 
@@ -483,9 +483,9 @@ def draw():
     
 
     #affichage du meilleur individu
-    #nouvellePop.meilleurIndividu()
+    nouvellePop.meilleurIndividu()
     #affichage de la population finale
-    nouvellePop.drawPop()
+    #nouvellePop.drawPop()
 
     #mesure du temps d'execution
     tps2 = time.clock()
