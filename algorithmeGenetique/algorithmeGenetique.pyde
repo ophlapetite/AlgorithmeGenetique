@@ -3,8 +3,9 @@
 from random import randint  #pour obtenir des entiers aléatoires
 import time                 #pour mesurer le temps d'execution
 N=1                         #numéro de génération 
-nurserie=[]                 # déclaration de la liste représentant la nurserie 
-saveStats= True             #remplir ou non le fichier csv pour faire un graphique
+nurserie=[]                 #déclaration de la liste représentant la nurserie 
+saveStats= False            #remplir ou non le fichier csv pour faire un graphique
+saveTmpExec= False          #enregistrer ou nom le temps d'execution dans un fichier csv
 #########################################################################################RÉGLAGES########################################################################################################
 
 nbGeneration=100            #nombre de générations à engendrer 
@@ -209,10 +210,12 @@ class Population:
             if(ind.cout > coutMax):
                 coutMax = ind.cout
                 
-        #moyenne
+        #calcul moyenne
         coutMoyen = coutMoyen/indParPopulation
-        
+        #affichage console
         print("Cout Min : "+str(coutMin)+ ", Cout Max : "+str(coutMax)+", Cout Moyen : "+str(coutMoyen)+" Generation :"+str(N))
+        
+        #partie sauvegarde dans fichier csv
         if(saveStats == True):
             file=open("stats.csv","a")
             line=str(coutMin)+";"+str(coutMoyen)+";"+str(coutMax)
@@ -471,16 +474,16 @@ def draw():
     Pop=Population(N)
     Pop.generePop()
     print("----------- Les stats -----------")
-
+    
     for i in range(nbGeneration):
         N += 1
         nouvellePop=Population(N)
         Pop.engendrePopulationSuivante()
-        nouvellePop.individus = nurserie
+        nouvellePop.individus = nurserie 
         nouvellePop.stats()
         Pop.individus = nouvellePop.individus
-        
-    print("-----------")
+    
+
     #affichage du meilleur individu
     nouvellePop.meilleurIndividu()
     #affichage de la population finale
@@ -488,4 +491,15 @@ def draw():
 
     #mesure du temps d'execution
     tps2 = time.clock()
-    print("temps d'execution : ",tps2-tps1, " secondes.")
+    tmptot=tps2-tps1
+    #affichage console
+    print("-----------")
+    print("temps d'execution : ",tmptot, " secondes.")
+    
+    if(saveTmpExec == True):
+    #sauvegarde temps d'execution dans fichier csv 
+        file=open("statsExec.csv","a")
+        line=str(tmptot)+";"+str(nbGeneration)
+        file.write(line)
+        file.write("\n")
+        file.close()
