@@ -4,8 +4,7 @@ from random import randint  #pour obtenir des entiers aléatoires
 import time                 #pour mesurer le temps d'execution
 N=1                         #numéro de génération 
 nurserie=[]                 #déclaration de la liste représentant la nurserie 
-saveStats= False            #remplir ou non le fichier csv pour faire un graphique
-saveTmpExec= False          #enregistrer ou nom le temps d'execution dans un fichier csv
+
 #########################################################################################RÉGLAGES########################################################################################################
 
 nbGeneration=100            #nombre de générations à engendrer 
@@ -19,6 +18,8 @@ nbSelection=40              #nombre d'individus sélectionnés
 nbReproCroisee=30           #nombre d'individus engendrés par reproduction croisée
 nbMutation=30               #nombre d'individus mutés dans la nurserie
 coefMutation=0.5            #coefficient du cout initial qui doit être supérieur au coût après mutation
+saveStats= False            #remplir ou non le fichier csv pour faire un graphique
+saveTmpExec= False          #enregistrer ou nom le temps d'execution dans un fichier csv
 
 ###################################################################################### CLASSE POPULATION ################################################################################################
 
@@ -481,7 +482,6 @@ def draw():
         nouvellePop.stats()
         Pop.individus = nouvellePop.individus
     
-
     #affichage du meilleur individu
     nouvellePop.meilleurIndividu()
     #affichage de la population finale
