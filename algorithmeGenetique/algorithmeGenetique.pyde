@@ -18,7 +18,7 @@ indParPopulation=100        #nombre d'individus par population
 nbSelection=40              #nombre d'individus sélectionnés
 nbReproCroisee=30           #nombre d'individus engendrés par reproduction croisée
 nbMutation=30               #nombre d'individus mutés dans la nurserie
-coefMutation=0.4            #coefficient du cout initial qui doit être supérieur au coût après mutation
+coefMutation=0.5            #coefficient du cout initial qui doit être supérieur au coût après mutation
 
 ###################################################################################### CLASSE POPULATION ################################################################################################
 
