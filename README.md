@@ -1,27 +1,27 @@
-# ProjetPython
-algorithme génétique - M1 MEEF INFO - UE Programmation
+# Projet Algorithme Génétique - génération de glyphes 
+M1 MEEF INFO - UE Programmation
 Auteurs: CLUZEL Ophélie et MAURICE Benjamin
 
-Comment utiliser le programme ?
+## Comment utiliser le programme ?
 
 Lancer le fichier algorithmeGenetique.pyde
 Exécutez le programme
 
-Options?
+## Options?
 
-Affichage fenêtre graphique: 
+### Affichage fenêtre graphique: 
 
 -Si vous souhaitez afficher uniquement le meilleur individu de la population finale(option par défaut): mettre en commentaire la ligne 488 et décommenter la ligne 486 "nouvellePop.meilleurIndividu()"
 
 -Si vous voulez afficher la population finale entière: mettre en commentaire la ligne 486 et décommenter la ligne 488 "nouvellePop.drawPop()"
 
-Sauvegarde fichiers csv:
+### Sauvegarde fichiers csv:
 
 -Si vous voulez sauvegarder les statistiques de coût: mettre la variable saveStats à True (ligne 21)
 
 -Si vous voulez sauvegarder les statistiques de temps d'exécution: mettre la variable saveTmpExec à True (ligne 22)
 
-Réglages:
+### Réglages des paramètres:
 
 -Si vous souhaitez changer le glyphe à approximer il suffit de changer la valeur de la variable lettre (ligne 13)
 
