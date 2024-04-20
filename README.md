@@ -4,7 +4,7 @@ Auteurs: CLUZEL Ophélie et MAURICE Benjamin
 
 ## Comment utiliser le programme ?
 
-Lancer le fichier algorithmeGenetique.pyde
+Lancer le fichier algorithmeGenetique.pyde sur Processing en Python. 
 Exécutez le programme
 
 ## Options?
